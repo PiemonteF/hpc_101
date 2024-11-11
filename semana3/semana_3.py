@@ -6,51 +6,56 @@ def sum_part(numbers, start, end, results, index):
     results[index] = total
 
 if __name__ == "__main__":
-    # Defina a lista de números para o teste
-    # numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]  # Teste 1
-    # numbers = list(range(1, 10000))  # Teste 2
-    numbers = list(range(1, 10000001))  # Teste 3
+    # Defina os diferentes casos de teste para a lista de números
+    test_cases = [
+        [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],  # Teste 1
+        list(range(1, 10000)),            # Teste 2
+        list(range(1, 10000001))          # Teste 3
+    ]
 
-    # Inicia a medição do tempo
-    start_time = time.time()
+    for case_index, numbers in enumerate(test_cases, start=1):
+        print(f"\nExecutando Teste {case_index}...")
 
-    # Calcula a soma total sem o uso de threads
-    total_sum = 0
-    for i in numbers:
-        total_sum += i
+        # Inicia a medição do tempo
+        start_time = time.time()
 
-    # Finaliza a medição do tempo
-    end_time = time.time()
+        # Calcula a soma total sem o uso de threads
+        total_sum = 0
+        for i in numbers:
+            total_sum += i
 
-    print(f"A soma total é: {total_sum}")
-    print(f"Tempo de execução sem threads: {end_time - start_time:.6f} segundos")
+        # Finaliza a medição do tempo
+        end_time = time.time()
 
-    num_threads = 2  # Altere este valor para testar com mais threads
+        print(f"A soma total é: {total_sum}")
+        print(f"Tempo de execução sem threads: {end_time - start_time:.6f} segundos")
 
-    part_size = len(numbers) // num_threads
-    results = [0] * num_threads
-    threads = []
+        num_threads = 2  # Altere este valor para testar com mais threads
 
-    # Inicia a medição do tempo
-    start_time = time.time()
+        part_size = len(numbers) // num_threads
+        results = [0] * num_threads
+        threads = []
 
-    for i in range(num_threads):
-        start = i * part_size
-        if i == num_threads - 1:
-            end = len(numbers)
-        else:
-            end = (i + 1) * part_size
-        t = threading.Thread(target=sum_part, args=(numbers, start, end, results, i))
-        threads.append(t)
-        t.start()
+        # Inicia a medição do tempo
+        start_time = time.time()
 
-    for t in threads:
-        t.join()
+        for i in range(num_threads):
+            start = i * part_size
+            if i == num_threads - 1:
+                end = len(numbers)
+            else:
+                end = (i + 1) * part_size
+            t = threading.Thread(target=sum_part, args=(numbers, start, end, results, i))
+            threads.append(t)
+            t.start()
 
-    total_sum = sum(results)
+        for t in threads:
+            t.join()
 
-    # Finaliza a medição do tempo
-    end_time = time.time()
+        total_sum = sum(results)
 
-    print(f"A soma total é: {total_sum}")
-    print(f"Tempo de execução: {end_time - start_time:.6f} segundos")
+        # Finaliza a medição do tempo
+        end_time = time.time()
+
+        print(f"A soma total é: {total_sum}")
+        print(f"Tempo de execução com threads: {end_time - start_time:.6f} segundos")
